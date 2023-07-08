@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tic Tac Toe</title>
+  <style>
+    /* Add CSS styles for the game board and cells */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 300px;
+      margin: 0 auto;
+    }
+    
+    .cell {
+      width: 100px;
+      height: 100px;
+      border: 2px solid black;
+      font-size: 40px;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tic Tac Toe</h1>
+  
+  <div class="board">
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
+  
+  <button id="reset-btn">Reset</button>
+
+  <script>
+    // Add JavaScript code for the game logic
+    const cells = document.querySelectorAll('.cell');
+    const resetButton = document.getElementById('reset-btn');
+    let currentPlayer = 'X';
+    let gameActive = true;
+
+    const winningCombinations = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6] // Diagonals
+    ];
+
+    function resetGame() {
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('winner');
+      });
+      currentPlayer = 'X';
+      gameActive = true;
+    }
+
+    function handleCellClick(cell, index) {
+      if (!cell.textContent && gameActive) {
+        cell.textContent = currentPlayer;
+        cell.classList.add(currentPlayer);
+
+        if (checkWin(currentPlayer)) {
+          gameActive = false;
+          cells.forEach(cell => {
+            cell.classList.add('winner');
+          });
+          alert(`Player ${currentPlayer} won!`);
+          return;
+        }
+
+        if (checkDraw()) {
+          gameActive = false;
+          alert('It\'s a draw!');
+          return;
+        }
+
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      }
+    }
+
+    function checkWin(player) {
+      return winningCombinations.some(combination => {
+        return combination.every(index => {
+          return cells[index].classList.contains(player);
+        });
+      });
+    }
+
+    function checkDraw() {
+      return [...cells].every(cell => {
+        return cell.textContent !== '';
+      });
+    }
+
+    cells.forEach((cell, index) => {
+      cell.addEventListener('click', () => {
+        handleCellClick(cell, index);
+      });
+    });
+
+    resetButton.addEventListener('click', () => {
+      resetGame();
+    });
+  </script>
+</body>
+</html>
